@@ -1,0 +1,15 @@
+.git
+Dockerfile*
+docker-compose.test.yml
+php-composer.iml
+qodana.yaml
+readme.md
+.idea
+.vscode
+.junie
+vendor
+node_modules
+5.6
+8.2
+8.4
+8.5
