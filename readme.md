@@ -44,8 +44,6 @@ docker buildx build --platform linux/amd64,linux/arm64 -t davidzapata/php-compos
 
 This repository uses GitHub Actions for automated builds, testing, and publishing. The workflow is triggered on pushes to the `main` branch and on pull requests.
 
-On successful pushes to the `main` branch, the `readme.md` file is automatically synchronized with the Docker Hub repository overview.
-
 ### Required Secrets
 
 To enable the workflow, the following secrets must be configured in your GitHub repository:

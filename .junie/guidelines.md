@@ -28,7 +28,6 @@ The following PHP versions must be maintained:
 - Example: `davidzapata/php-composer:8.5`
 - **Multi-platform support**: Use `docker buildx` to build for `linux/amd64` and `linux/arm64`.
 - **Pushing**: Use the `--push` flag to push images to the registry.
-- **Repository Overview**: The `readme.md` file is automatically synchronized with the Docker Hub repository overview on successful pushes to the `main` branch.
 
 ## Maintenance
 When updating extensions or base images, ensure all supported PHP version Dockerfiles are updated accordingly and re-published using:
