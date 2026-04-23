@@ -12,6 +12,7 @@ The following PHP versions must be maintained:
 ## Dockerfile Requirements
 - **Base Images**: 
     - Use [Docker Hardened Images (DHI)](https://dhi.io) as base for supported PHP versions (8.2, 8.4, 8.5). Base tags should follow the pattern `dhi.io/php:<version>-dev`.
+    - When using DHI as base, always include the `org.opencontainers.image.base.name` label in the Dockerfile to help Docker Scout identify the base image.
     - PHP 5.6 uses official `php:5.6-cli`.
 - **Slimness**: Images must be as slim as possible. Use multi-stage builds or clean up apt caches and temporary files in the same layer as installation.
 - **Extensions**: All images should include common extensions: `xdebug`, `gd`, `zip`, `bcmath`, `pdo_mysql`, `pdo_pgsql`, `soap`, `redis`, `pcntl`, `mongodb`, `sockets`.

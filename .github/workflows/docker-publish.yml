@@ -65,6 +65,7 @@ jobs:
 
       - name: Docker Scout Quickview
         uses: docker/scout-action@v1
+        continue-on-error: true
         with:
           command: quickview
           image: davidzapata/php-composer:test-${{ matrix.php_version }}
@@ -86,6 +87,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          provenance: mode=max
+          sbom: true
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

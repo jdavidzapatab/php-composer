@@ -23,6 +23,7 @@ RUN set -eux; \
 FROM dhi.io/php:8.5-dev
 
 LABEL maintainer="David Zapata <jdavid.zapatab@gmail.com>"
+LABEL org.opencontainers.image.base.name="dhi.io/php:8.5-dev"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
