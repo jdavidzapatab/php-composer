@@ -67,4 +67,5 @@ VOLUME /var/www
 
 EXPOSE 80 8000
 
+ENTRYPOINT []
 CMD ["bash"]

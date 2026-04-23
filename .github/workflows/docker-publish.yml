@@ -60,8 +60,8 @@ jobs:
 
       - name: Test PHP and Composer
         run: |
-          docker run --rm davidzapata/php-composer:test-${{ matrix.php_version }} php -v
-          docker run --rm davidzapata/php-composer:test-${{ matrix.php_version }} composer --version
+          docker run --rm --entrypoint php davidzapata/php-composer:test-${{ matrix.php_version }} -v
+          docker run --rm --entrypoint composer davidzapata/php-composer:test-${{ matrix.php_version }} --version
 
       - name: Docker Scout Quickview
         uses: docker/scout-action@v1
