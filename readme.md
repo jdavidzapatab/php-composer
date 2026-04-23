@@ -10,7 +10,15 @@ Available PHP versions:
 
 ## Build
 
-To build the images, use the following commands from the root of the repository:
+To build the images, use the following commands from the root of the repository. 
+
+**Note**: For PHP 8.2 and above, we use [Docker Hardened Images (DHI)](https://www.docker.com/products/hardened-images/) as a base. You must be authenticated to `dhi.io` to pull the base images:
+
+```bash
+docker login dhi.io
+```
+
+Use your Docker Hub credentials and a Personal Access Token (PAT).
 
 ### PHP 8.5 (Latest)
 ```bash
@@ -77,7 +85,8 @@ docker scout cves davidzapata/php-composer:8.5
 ```
 
 The Dockerfiles follow best practices to remain slim and secure:
-- Use official PHP CLI images as base.
+- Use [Docker Hardened Images (DHI)](https://dhi.io) as base for supported PHP versions (8.2+).
+- PHP 5.6 uses official PHP CLI images (legacy).
 - Multi-stage or single-layer builds to minimize footprint.
 - Targeted security updates for known vulnerabilities.
 - Removal of build-time dependencies (GCC, etc.) after extension installation.

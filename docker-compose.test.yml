@@ -2,4 +2,5 @@ version: '3.8'
 services:
   sut:
     build: "8.5"
-    command: "composer --version"
+    entrypoint: ["composer"]
+    command: ["--version"]

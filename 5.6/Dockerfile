@@ -10,7 +10,13 @@ COPY --from=composer:2.2 /usr/bin/composer /usr/bin/composer
 
 # Install PHP extensions in a single layer
     # Note: mcrypt is required for 5.6 as per instructions
+    # Switch to archive.debian.org for EOL Stretch
 RUN set -eux; \
+    sed -i 's/deb.debian.org/archive.debian.org/g' /etc/apt/sources.list; \
+    sed -i 's/security.debian.org/archive.debian.org/g' /etc/apt/sources.list; \
+    sed -i '/stretch-updates/d' /etc/apt/sources.list; \
+    apt-get update; \
+    apt-get upgrade -y --allow-unauthenticated; \
     chmod +x /usr/local/bin/install-php-extensions; \
     install-php-extensions \
         mcrypt \

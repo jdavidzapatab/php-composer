@@ -1,23 +1,11 @@
-FROM php:8.5-cli-bookworm
-
-LABEL maintainer="David Zapata <jdavid.zapatab@gmail.com>"
+# Builder stage: Use official PHP image to compile extensions
+FROM php:8.5-cli AS builder
 
 # Install-php-extensions script
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/
 
-# Install composer
-COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-
-# Fix CVEs (specifically nghttp2 CVE-2026-27135) and install PHP extensions in a single layer
+# Install PHP extensions
 RUN set -eux; \
-    chmod +x /usr/local/bin/install-php-extensions; \
-    apt-get update; \
-    apt-get upgrade -y; \
-    echo "deb http://deb.debian.org/debian sid main" > /etc/apt/sources.list.d/sid.list; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends -t sid libnghttp2-14; \
-    rm /etc/apt/sources.list.d/sid.list; \
-    apt-get update; \
     install-php-extensions \
         xdebug \
         gd \
@@ -29,10 +17,49 @@ RUN set -eux; \
         redis \
         pcntl \
         mongodb \
-        sockets; \
-    apt-get purge -y --auto-remove gcc g++ make cpp binutils; \
+        sockets
+
+# Final stage: Use Docker Hardened Image
+FROM dhi.io/php:8.5-dev
+
+LABEL maintainer="David Zapata <jdavid.zapatab@gmail.com>"
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Copy extensions from builder
+# PHP 8.5 extension dir: no-debug-non-zts-20250925
+COPY --from=builder /usr/local/lib/php/extensions/no-debug-non-zts-20250925/ /opt/php-8.5/lib/php/extensions/no-debug-non-zts-20250925/
+COPY --from=builder /usr/local/etc/php/conf.d/docker-php-ext-* /opt/php-8.5/etc/php/conf.d/
+
+# Install runtime dependencies for the extensions and cleanup
+RUN set -eux; \
+    apt-get update; \
+    apt-get upgrade -y; \
+    apt-get install -y --no-install-recommends \
+        libfreetype6 \
+        libjpeg62-turbo \
+        libpng16-16t64 \
+        libxpm4 \
+        libwebp7 \
+        libavif16 \
+        libzip5 \
+        libpq5 \
+        libxml2 \
+        libsnappy1v5 \
+    ; \
+    echo "deb http://deb.debian.org/debian sid main" > /etc/apt/sources.list.d/sid.list; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends -t sid libnghttp2-14 tar libpng16-16t64; \
+    rm -f /etc/apt/sources.list.d/sid.list; \
+    apt-get update; \
+    rm -f /var/lib/dpkg/status.d/libnghttp2-14 /var/lib/dpkg/status.d/tar /var/lib/dpkg/status.d/openssl; \
+    rm -f /opt/php-8.5/etc/php/conf.d/docker-php-ext-sodium.ini; \
+    rm -f /opt/php-8.5/etc/php/conf.d/docker-php-ext-opcache.ini; \
     apt-get clean; \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* /usr/share/man/* /usr/src/php.tar.xz
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/* /usr/share/man/*
 
 WORKDIR /var/www
 COPY . /var/www
