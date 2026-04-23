@@ -40,6 +40,26 @@ docker buildx build --platform linux/amd64,linux/arm64 -t davidzapata/php-compos
 docker buildx build --platform linux/amd64,linux/arm64 -t davidzapata/php-composer:5.6 --push 5.6/
 ```
 
+## GitHub Actions
+
+This repository uses GitHub Actions for automated builds, testing, and publishing. The workflow is triggered on pushes to the `main` branch and on pull requests.
+
+On successful pushes to the `main` branch, the `readme.md` file is automatically synchronized with the Docker Hub repository overview.
+
+### Required Secrets
+
+To enable the workflow, the following secrets must be configured in your GitHub repository:
+
+- `DOCKERHUB_USERNAME`: Your Docker Hub username.
+- `DOCKERHUB_TOKEN`: Your Docker Hub Personal Access Token (PAT) with push permissions.
+- `DHI_TOKEN`: Your Docker Hub PAT (required for authenticating with `dhi.io` to pull hardened base images).
+
+The workflow performs the following steps:
+1. Builds each PHP version image locally.
+2. Runs functional tests (`php -v`, `composer --version`).
+3. Performs a security scan using Docker Scout.
+4. Pushes multi-platform images (`linux/amd64`, `linux/arm64`) to Docker Hub if tests pass.
+
 ## Pull from Docker Hub
 
 You can pull the pre-built images:
